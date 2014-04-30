@@ -9,9 +9,7 @@ class YesNo a where
 class YesNo' flag a where
   yesno' :: flag -> a -> Bool
 
-instance (MaybePred a flag, YesNo' flag a) => YesNo a where 
-  yesno = yesno' (undefined :: flag)
-
+-- functional dependency: says flag is uniquely determined by a
 class MaybePred a flag | a->flag where {}
 
 instance (flag ~ HFalse) => MaybePred a flag
@@ -30,6 +28,12 @@ instance (YesNo a) => YesNo' HFalse (Maybe a) where
 
 instance YesNo' b a where
   yesno' _ _ = True
+
+
+-- a YesNo for which there is a (MaybePred a flag), where flag is uniquely determined
+-- by a, and a (YesNo' flag a).
+instance (MaybePred a flag, YesNo' flag a) => YesNo a where 
+  yesno = yesno' (undefined :: flag)
 
 instance YesNo String where
   yesno ('y':_) = True

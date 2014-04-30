@@ -6,6 +6,8 @@
 {-# LANGUAGE ScopedTypeVariables    #-}
 {-# LANGUAGE TypeFamilies           #-}
 {-# LANGUAGE UndecidableInstances   #-}
+{-# LANGUAGE MultiWayIf   #-}
+{-# LANGUAGE LambdaCase #-}
 
 import           Data.Char
 import           Data.List
@@ -15,8 +17,7 @@ import Control.Monad.Writer
 import Data.Monoid
 import Control.Monad.Instances
 import Control.Applicative
-
-
+import System.IO
 
 import           Control.Monad
 
@@ -191,4 +192,26 @@ convo = do
 convo2 :: Reader String String
 convo2 = hello >>= \c1 -> bye >>= \c2 -> return (c1 ++ c2)
 
- 
+-- runReader convo2 $ "hello"
+
+-- Pattern guards 
+combine d x y
+ | Just a <- Map.lookup x d , Just b <- Map.lookup y d = Just (a ++ b)
+ | otherwise = Nothing
+
+-- multiwayif
+mwi x = if
+     | x > 100   -> 3  
+     | x > 10    -> 2  
+     | x > 1     -> 1  
+     | otherwise -> 0
+
+-- LambdaCase
+lc = \case {Just y -> "just"; Nothing -> "nada"}
+
+capslock = do
+  contents <- readFile "boffo"
+  putStr (map toUpper contents)
+
+-- Equivalently
+--  (readFile "boffo") >>= putStr . map toUpper
